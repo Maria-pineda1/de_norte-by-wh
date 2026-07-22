@@ -34,7 +34,7 @@
   --shadow-md:   0 4px 24px rgba(59,108,244,0.12);
 }
 
-html, body { height:100%; }
+html, body { height:100%; overflow-x:hidden; }
 body {
   font-family:'Montserrat',sans-serif;
   background:var(--bg);
@@ -61,17 +61,37 @@ body {
   left:0; top:0; bottom:0;
   z-index: 100;
   overflow-y: auto;
+  transition: transform 0.25s ease;
 }
-
-.sidebar-brand {
-  padding: 24px 20px 20px;
-  border-bottom: 1px solid var(--border);
+.sidebar-backdrop {
+  position: fixed;
+  inset:0;
+  background: rgba(15,23,42,0.35);
+  opacity:0;
+  visibility:hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 90;
 }
-.brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 0;
+.sidebar.open + .sidebar-backdrop,
+.sidebar-backdrop.show {
+  opacity:1;
+  visibility:visible;
+}
+.menu-toggle {
+  display:none;
+  width:40px;
+  height:40px;
+  border:none;
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  border-radius:12px;
+  align-items:center;
+  justify-content:center;
+}
+.menu-toggle svg {
+  width:20px;
+  height:20px;
 }
 .brand-icon {
   width: 34px; height: 34px;
@@ -129,6 +149,9 @@ body {
   display:flex; align-items:center; justify-content:space-between;
   position:sticky; top:0; z-index:50;
 }
+.menu-toggle {
+  display:none;
+}
 .topbar-title { font-size:18px; font-weight:800; color:var(--text); }
 .topbar-sub   { font-size:11px; color:var(--text-muted); margin-top:1px; }
 .topbar-right { display:flex; align-items:center; gap:10px; }
@@ -139,7 +162,48 @@ body {
   padding:4px 10px; border-radius:99px;
   letter-spacing:0.3px;
 }
-
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 100%;
+    max-width: 260px;
+    box-shadow: 0 18px 50px rgba(15,23,42,0.15);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main { margin-left:0; }
+  .topbar { padding:0 18px; }
+  .topbar-right { gap:8px; }
+  .content { padding:18px; }
+  .menu-toggle { display:flex; }
+  .sidebar-footer { display:none; }
+  .kpi-grid.g3, .kpi-grid.g4, .row2, .row2-eq, .row3 {
+    grid-template-columns:1fr;
+  }
+  .row2, .row2-eq, .row3 { gap:14px; }
+  .card, .dbox, .roi-big, .opp-card { padding:18px 16px; }
+  .footer { padding:16px 18px; }
+  .sidebar-nav { padding:16px 14px; }
+  .nav-item { padding:12px 10px; }
+  .f-label { width:120px; }
+  .status-item { padding:10px 10px; }
+  .venta-block { padding:12px 14px; }
+}
+@media (max-width: 650px) {
+  .topbar { height:auto; padding:12px 16px; align-items:flex-start; gap:10px; }
+  .topbar-title { font-size:16px; }
+  .topbar-sub { font-size:10px; }
+  .topbar-right { display:none; }
+  .content { padding:14px; }
+  .card, .dbox, .roi-big, .opp-card { padding:16px 14px; }
+  .kcard { padding:16px 16px; }
+  .kcard-val { font-size:22px; }
+  .metric-card { padding:16px 14px; }
+  .metric-val { font-size:24px; }
+  .f-label { width:100px; font-size:10px; }
+  .f-num, .f-pct { font-size:12px; }
+}
 /* CONTENT */
 .content { padding:24px 28px; flex:1; }
 .tab-content { display:none; }
@@ -406,11 +470,15 @@ body {
     <div class="footer-sub">ROI 33.17x · ROAS $34.18</div>
   </div>
 </aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 <!-- ═══ MAIN ═══ -->
 <div class="main">
 
   <div class="topbar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div>
       <div class="topbar-title" id="page-title">Mayo 2026</div>
       <div class="topbar-sub">Campaña de Generación de Leads · Meta Ads</div>
@@ -903,8 +971,31 @@ function switchTab(tab) {
   setTimeout(() => renderChart(tab), 50);
 }
 
+const sidebar = document.querySelector('.sidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+const menuToggle = document.getElementById('menuToggle');
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  sidebarBackdrop.classList.remove('show');
+}
+function openSidebar() {
+  sidebar.classList.add('open');
+  sidebarBackdrop.classList.add('show');
+}
+menuToggle?.addEventListener('click', () => {
+  if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar();
+});
+sidebarBackdrop?.addEventListener('click', closeSidebar);
+
 document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
-  btn.addEventListener('click', function() { switchTab(this.getAttribute('data-tab')); });
+  btn.addEventListener('click', function() {
+    switchTab(this.getAttribute('data-tab'));
+    if (window.innerWidth <= 900) closeSidebar();
+  });
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 900) closeSidebar();
 });
 
 renderChart('mayo');
