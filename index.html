@@ -165,7 +165,7 @@ body {
 @media (max-width: 900px) {
   .sidebar {
     transform: translateX(-100%);
-    width: 100%;
+    width: min(92vw, 260px);
     max-width: 260px;
     box-shadow: 0 18px 50px rgba(15,23,42,0.15);
   }
@@ -173,25 +173,38 @@ body {
     transform: translateX(0);
   }
   .main { margin-left:0; }
-  .topbar { padding:0 18px; }
+  .topbar { padding:0 18px; flex-wrap:wrap; gap:10px; }
+  .topbar-title { flex:1 1 100%; }
   .topbar-right { gap:8px; }
   .content { padding:18px; }
   .menu-toggle { display:flex; }
   .sidebar-footer { display:none; }
+  .sidebar-nav { padding:16px 14px 24px; }
   .kpi-grid.g3, .kpi-grid.g4, .row2, .row2-eq, .row3 {
     grid-template-columns:1fr;
   }
-  .row2, .row2-eq, .row3 { gap:14px; }
-  .card, .dbox, .roi-big, .opp-card { padding:18px 16px; }
+  .row2, .row2-eq, .row3 { gap:16px; }
+  .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard {
+    padding:18px 16px;
+    border-color:rgba(148,163,184,0.16);
+    box-shadow:0 10px 20px rgba(15,23,42,0.06);
+  }
   .footer { padding:16px 18px; }
-  .sidebar-nav { padding:16px 14px; }
   .nav-item { padding:12px 10px; }
+  .nav-item svg { width:18px; height:18px; }
   .f-label { width:120px; }
   .status-item { padding:10px 10px; }
   .venta-block { padding:12px 14px; }
+  .topbar-right { width:100%; justify-content:flex-start; }
+  .topbar-badge { width:auto; }
+  .card-hd, .roi-top, .opp-row, .funnel-row, .sum-row {
+    flex-wrap:wrap;
+    gap:8px;
+  }
 }
 @media (max-width: 650px) {
   .topbar { height:auto; padding:12px 16px; align-items:flex-start; gap:10px; }
+  .menu-toggle { order:-1; }
   .topbar-title { font-size:16px; }
   .topbar-sub { font-size:10px; }
   .topbar-right { display:none; }
@@ -203,6 +216,18 @@ body {
   .metric-val { font-size:24px; }
   .f-label { width:100px; font-size:10px; }
   .f-num, .f-pct { font-size:12px; }
+  .sidebar {
+    width: min(88vw, 240px);
+  }
+  .sidebar-nav { padding:14px 12px; }
+  .nav-item { padding:10px 10px; }
+  .sidebar-footer { display:none; }
+  .topbar { justify-content:space-between; }
+  .metric-card, .kcard, .card { min-height: auto; }
+  .roi-big { padding:16px 14px; }
+  .metric-formula { white-space:normal; }
+  .card-title, .roi-label, .metric-label { font-size:12px; }
+  .topbar-right { width:100%; justify-content:flex-start; }
 }
 /* CONTENT */
 .content { padding:24px 28px; flex:1; }
