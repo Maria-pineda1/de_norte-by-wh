@@ -228,6 +228,30 @@ body {
   .metric-formula { white-space:normal; }
   .card-title, .roi-label, .metric-label { font-size:12px; }
   .topbar-right { width:100%; justify-content:flex-start; }
+  .kpi-grid.g4, .kpi-grid.g3, .row2, .row2-eq, .row3 {
+    grid-template-columns:1fr;
+  }
+  .kpi-grid { gap:12px; }
+  .row2, .row2-eq, .row3 { gap:14px; }
+  .roi-top, .roi-detail-row, .opp-row, .sum-row, .funnel-row {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .roi-detail-row, .opp-row, .sum-row, .funnel-row {
+    justify-content:flex-start;
+  }
+  .roi-detail, .metric-formula, .card-sub {
+    font-size:11px;
+  }
+  .metric-card, .kcard, .card, .dbox, .roi-big, .opp-card {
+    width:100%;
+  }
+  .chart-container, #chart-kpis {
+    min-height:260px;
+  }
+  .nav-item { font-size:13px; }
+  .topbar-badge { font-size:9px; padding:4px 8px; }
 }
 /* CONTENT */
 .content { padding:24px 28px; flex:1; }
