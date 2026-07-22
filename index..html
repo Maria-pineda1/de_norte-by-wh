@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Del Norte by Windmar Home · Reporte Meta Ads</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --blue:        #3b6cf4;
+  --blue-dark:   #2a4fd6;
+  --blue-light:  #eef2ff;
+  --blue-mid:    #c7d4fc;
+  --orange:      #f97316;
+  --orange-light:#fff7ed;
+  --green:       #22c55e;
+  --green-light: #f0fdf4;
+  --red:         #ef4444;
+  --red-light:   #fef2f2;
+  --purple:      #8b5cf6;
+  --purple-light:#f5f3ff;
+  --bg:          #f0f2f8;
+  --sidebar-bg:  #ffffff;
+  --white:       #ffffff;
+  --text:        #0f172a;
+  --text-muted:  #64748b;
+  --text-light:  #94a3b8;
+  --border:      #e8ecf4;
+  --shadow:      0 2px 12px rgba(59,108,244,0.07);
+  --shadow-md:   0 4px 24px rgba(59,108,244,0.12);
+}
+
+html, body { height:100%; }
+body {
+  font-family:'Montserrat',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+  font-size:13px;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#d1d9f0; border-radius:99px; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left:0; top:0; bottom:0;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+.brand-icon {
+  width: 34px; height: 34px;
+  background: var(--blue);
+  border-radius: 9px;
+  display: flex; align-items:center; justify-content:center;
+}
+.brand-icon svg { width:18px; height:18px; }
+.brand-text .name { font-size:13px; font-weight:800; color:var(--text); line-height:1.2; }
+.brand-text .sub  { font-size:10px; color:var(--text-muted); font-weight:500; margin-top:1px; }
+
+.sidebar-nav { padding:16px 12px; flex:1; }
+.nav-section-label {
+  font-size:9px; font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--text-light);
+  padding:0 10px; margin:16px 0 6px;
+}
+.nav-section-label:first-child { margin-top:0; }
+
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px;
+  border-radius:9px;
+  cursor:pointer;
+  transition:all 0.15s;
+  font-size:12px; font-weight:500;
+  color:var(--text-muted);
+  margin-bottom:1px;
+}
+.nav-item:hover { background:var(--blue-light); color:var(--blue); }
+.nav-item.active { background:var(--blue); color:#fff; font-weight:600; }
+.nav-item svg { width:15px; height:15px; flex-shrink:0; opacity:0.7; }
+.nav-item.active svg { opacity:1; }
+
+.sidebar-footer {
+  margin:12px;
+  background:linear-gradient(135deg,var(--blue-dark),var(--blue));
+  border-radius:14px;
+  padding:16px;
+  color:#fff;
+}
+.sidebar-footer .footer-label { font-size:10px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; opacity:0.7; margin-bottom:4px; }
+.sidebar-footer .footer-val  { font-size:20px; font-weight:800; }
+.sidebar-footer .footer-sub  { font-size:10px; opacity:0.65; margin-top:2px; }
+
+/* ─── MAIN ─── */
+.main { margin-left:220px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
+
+/* TOPBAR */
+.topbar {
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+.topbar-title { font-size:18px; font-weight:800; color:var(--text); }
+.topbar-sub   { font-size:11px; color:var(--text-muted); margin-top:1px; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.topbar-badge {
+  background:var(--blue-light);
+  color:var(--blue);
+  font-size:10px; font-weight:700;
+  padding:4px 10px; border-radius:99px;
+  letter-spacing:0.3px;
+}
+
+/* CONTENT */
+.content { padding:24px 28px; flex:1; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* ─── KPI CARDS ─── */
+.kpi-grid { display:grid; gap:14px; margin-bottom:20px; }
+.g3 { grid-template-columns:repeat(3,1fr); }
+.g4 { grid-template-columns:repeat(4,1fr); }
+
+.kcard {
+  background:var(--white);
+  border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+}
+.kcard-accent {
+  position:absolute; top:0; left:0; right:0; height:3px;
+}
+.kcard.blue .kcard-accent  { background:linear-gradient(90deg,var(--blue),#60a5fa); }
+.kcard.orange .kcard-accent{ background:linear-gradient(90deg,var(--orange),#fb923c); }
+.kcard.green .kcard-accent { background:linear-gradient(90deg,var(--green),#4ade80); }
+.kcard.purple .kcard-accent{ background:linear-gradient(90deg,var(--purple),#a78bfa); }
+.kcard.red .kcard-accent   { background:linear-gradient(90deg,var(--red),#f87171); }
+
+.kcard-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+.kcard-icon {
+  width:38px; height:38px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+}
+.kcard.blue   .kcard-icon { background:var(--blue-light); }
+.kcard.orange .kcard-icon { background:var(--orange-light); }
+.kcard.green  .kcard-icon { background:var(--green-light); }
+.kcard.purple .kcard-icon { background:var(--purple-light); }
+.kcard.red    .kcard-icon { background:var(--red-light); }
+.kcard-icon svg { width:16px; height:16px; }
+.kcard.blue   .kcard-icon svg { color:var(--blue); }
+.kcard.orange .kcard-icon svg { color:var(--orange); }
+.kcard.green  .kcard-icon svg { color:var(--green); }
+.kcard.purple .kcard-icon svg { color:var(--purple); }
+.kcard.red    .kcard-icon svg { color:var(--red); }
+
+.kcard-tag {
+  font-size:10px; font-weight:700;
+  padding:3px 8px; border-radius:99px;
+}
+.tag-up   { background:#dcfce7; color:#16a34a; }
+.tag-down { background:#fee2e2; color:#dc2626; }
+.tag-neu  { background:#f1f5f9; color:#475569; }
+
+.kcard-label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+.kcard-val   { font-size:26px; font-weight:800; line-height:1; }
+.kcard.blue   .kcard-val { color:var(--blue); }
+.kcard.orange .kcard-val { color:var(--orange); }
+.kcard.green  .kcard-val { color:var(--green); }
+.kcard.purple .kcard-val { color:var(--purple); }
+.kcard.red    .kcard-val { color:var(--red); }
+.kcard-sub   { font-size:11px; color:var(--text-light); margin-top:5px; }
+
+/* ─── LAYOUT GRIDS ─── */
+.row2      { display:grid; grid-template-columns:1fr 320px; gap:18px; margin-bottom:18px; }
+.row2-eq   { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px; }
+.row3      { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:18px; }
+
+/* ─── CARD ─── */
+.card {
+  background:var(--white);
+  border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  padding:20px 22px;
+}
+.card-hd { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.card-title { font-size:14px; font-weight:700; color:var(--text); }
+.card-sub   { font-size:11px; color:var(--text-muted); margin-bottom:16px; }
+.card-label { font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-light); padding:3px 9px; background:var(--bg); border-radius:6px; }
+
+/* ─── FUNNEL ─── */
+.funnel-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.funnel-row:last-child { margin-bottom:0; }
+.f-label { font-size:11px; color:var(--text-muted); width:150px; flex-shrink:0; font-weight:500; }
+.f-bg    { flex:1; height:7px; background:var(--bg); border-radius:99px; overflow:hidden; }
+.f-fill  { height:100%; border-radius:99px; transition:width 0.6s ease; }
+.f-num   { font-size:13px; font-weight:800; color:var(--text); width:34px; text-align:right; }
+.f-pct   { font-size:10px; color:var(--text-light); width:38px; text-align:right; font-weight:600; }
+
+/* ─── LEAD STATUS LIST ─── */
+.status-list { display:flex; flex-direction:column; gap:6px; }
+.status-item { display:flex; align-items:center; gap:10px; padding:9px 12px; background:var(--bg); border-radius:9px; }
+.s-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.s-label { font-size:11px; color:var(--text-muted); flex:1; font-weight:500; }
+.s-count { font-size:14px; font-weight:800; color:var(--text); }
+.s-pct   { font-size:10px; color:var(--text-light); margin-left:4px; }
+.dot-yellow { background:#eab308; }
+.dot-red    { background:#ef4444; }
+.dot-green  { background:#22c55e; }
+.dot-blue   { background:#3b82f6; }
+.dot-orange { background:#f97316; }
+.dot-gray   { background:#94a3b8; }
+.dot-purple { background:#8b5cf6; }
+
+/* ─── DECISION BOX ─── */
+.dbox {
+  border-radius:12px; padding:16px 18px; margin-bottom:16px;
+  position:relative; overflow:hidden;
+}
+.dbox::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
+.dbox.green  { background:var(--green-light); border:1px solid #bbf7d0; }
+.dbox.green::before  { background:linear-gradient(90deg,#22c55e,#4ade80); }
+.dbox.orange { background:var(--orange-light); border:1px solid #fed7aa; }
+.dbox.orange::before { background:linear-gradient(90deg,var(--orange),#fb923c); }
+.dbox-title { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:7px; }
+.dbox.green .dbox-title  { color:#15803d; }
+.dbox.orange .dbox-title { color:#c2410c; }
+.dbox-text { font-size:12px; line-height:1.7; }
+.dbox.green .dbox-text  { color:#166534; }
+.dbox.orange .dbox-text { color:#7c2d12; }
+.dbox-text strong { font-weight:700; }
+
+/* ─── STEPS ─── */
+.steps { list-style:none; }
+.steps li { display:flex; gap:10px; font-size:11px; color:var(--text-muted); padding:9px 0; border-bottom:1px solid var(--bg); line-height:1.6; }
+.steps li:last-child { border-bottom:none; }
+.snum { background:var(--blue); color:#fff; font-size:8px; font-weight:800; width:17px; height:17px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.steps strong { color:var(--text); font-weight:700; }
+
+/* ─── TABLE ─── */
+.tbl { width:100%; border-collapse:collapse; font-size:12px; }
+.tbl th { text-align:left; padding:8px 10px; color:var(--text-light); font-weight:600; font-size:10px; letter-spacing:0.8px; text-transform:uppercase; border-bottom:1px solid var(--border); }
+.tbl td { padding:10px; color:var(--text); border-bottom:1px solid var(--bg); font-weight:500; }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:var(--bg); }
+.pill { display:inline-block; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:700; }
+.pill-up  { background:#dcfce7; color:#16a34a; }
+.pill-dn  { background:#fee2e2; color:#dc2626; }
+.pill-neu { background:#f1f5f9; color:#475569; }
+
+/* ─── VENTAS ─── */
+.venta-block {
+  background:var(--purple-light);
+  border:1px solid #ddd6fe;
+  border-radius:11px; padding:14px 16px; margin-bottom:10px;
+}
+.v-id   { font-size:9px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--purple); margin-bottom:8px; }
+.v-row  { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #ede9fe; font-size:12px; }
+.v-row:last-child { border-bottom:none; font-weight:700; }
+.v-tipo { color:#6d28d9; }
+.v-monto{ font-weight:700; color:#4c1d95; }
+.v-total-bar { background:#4c1d95; border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+.v-total-bar span:first-child { font-size:10px; font-weight:700; color:#c4b5fd; text-transform:uppercase; letter-spacing:1px; }
+.v-total-bar span:last-child  { font-size:18px; font-weight:800; color:#fff; }
+
+/* ─── ROI CARDS ─── */
+.roi-big {
+  border-radius:14px; padding:20px 22px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.roi-big.g { background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-color:#bbf7d0; }
+.roi-big.b { background:linear-gradient(135deg,#eff6ff,#dbeafe); border-color:#bfdbfe; }
+.roi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+.roi-label { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+.roi-big.g .roi-label { color:#15803d; }
+.roi-big.b .roi-label { color:#1d4ed8; }
+.roi-val-big { font-size:44px; font-weight:800; line-height:1; }
+.roi-big.g .roi-val-big { color:#15803d; }
+.roi-big.b .roi-val-big { color:#1d4ed8; }
+.roi-badge { border-radius:10px; padding:8px 12px; text-align:center; }
+.roi-big.g .roi-badge { background:#15803d; color:#fff; }
+.roi-big.b .roi-badge { background:#1d4ed8; color:#fff; }
+.roi-badge-val { font-size:12px; font-weight:800; }
+.roi-badge-sub { font-size:9px; opacity:0.75; }
+.roi-detail { background:rgba(255,255,255,0.6); border-radius:9px; padding:10px 12px; }
+.roi-detail-row { display:flex; justify-content:space-between; font-size:11px; padding:4px 0; }
+.roi-big.g .roi-detail-row { color:#166534; }
+.roi-big.b .roi-detail-row { color:#1e40af; }
+.roi-detail-row strong { font-weight:700; }
+.roi-note { font-size:10px; margin-top:10px; }
+.roi-big.g .roi-note { color:#166534; }
+.roi-big.b .roi-note { color:#1e40af; }
+
+/* KPI metric cards for KPIs tab */
+.metric-card {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:14px; box-shadow:var(--shadow);
+  padding:20px; text-align:center;
+}
+.metric-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; }
+.metric-icon svg { width:18px; height:18px; }
+.metric-label { font-size:10px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+.metric-val   { font-size:28px; font-weight:800; line-height:1; }
+.metric-sub   { font-size:11px; color:var(--text-light); margin-top:6px; line-height:1.4; }
+.metric-formula { margin-top:10px; background:var(--bg); border-radius:7px; padding:6px 10px; font-size:10px; color:var(--text-muted); font-weight:600; }
+
+/* Opp card */
+.opp-card {
+  background:linear-gradient(135deg,var(--purple-light),#ede9fe);
+  border:1px solid #ddd6fe; border-radius:14px;
+  box-shadow:var(--shadow); padding:22px;
+}
+.opp-num { font-size:56px; font-weight:800; color:var(--purple); line-height:1; margin:8px 0; }
+.opp-detail { background:rgba(255,255,255,0.6); border-radius:9px; padding:10px 12px; margin-top:12px; }
+.opp-row { display:flex; justify-content:space-between; font-size:11px; color:#6d28d9; padding:4px 0; }
+.opp-row strong { color:#4c1d95; }
+
+/* Summary table-style */
+.sum-row { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg); border-radius:8px; margin-bottom:6px; }
+.sum-row:last-child { margin-bottom:0; }
+.sum-lbl { font-size:12px; color:var(--text-muted); }
+.sum-val { font-size:13px; font-weight:800; color:var(--text); }
+
+/* ─── FOOTER ─── */
+.footer { text-align:center; font-size:10px; color:var(--text-light); padding:16px 28px; border-top:1px solid var(--border); background:var(--white); }
+
+/* ─── SVG ICONS inline ─── */
+.ic { display:inline-block; vertical-align:middle; }
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="name">Del Norte</div>
+        <div class="sub">Windmar Home</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Reportes</div>
+
+    <div class="nav-item active" data-tab="mayo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Mayo 2026
+    </div>
+    <div class="nav-item" data-tab="junio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Junio 2026
+    </div>
+    <div class="nav-item" data-tab="julio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Julio 2026
+    </div>
+
+    <div class="nav-section-label">Análisis</div>
+    <div class="nav-item" data-tab="kpis">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      KPIs Globales
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="footer-label">Ventas · 3 meses</div>
+    <div class="footer-val">$80,019</div>
+    <div class="footer-sub">ROI 33.17x · ROAS $34.18</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="page-title">Mayo 2026</div>
+      <div class="topbar-sub">Campaña de Generación de Leads · Meta Ads</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="page-badge">Solar &amp; Roofing · 31 días</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+  <!-- ══════════ TAB MAYO ══════════ -->
+  <div id="tab-mayo" class="tab-content active">
+
+    <div class="kpi-grid g3">
+      <div class="kcard blue">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top">
+          <div class="kcard-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <span class="kcard-tag tag-neu">31 días</span>
+        </div>
+        <div class="kcard-label">Gasto Total</div>
+        <div class="kcard-val">$436<span style="font-size:15px">.58</span></div>
+        <div class="kcard-sub">USD invertidos en el mes</div>
+      </div>
+      <div class="kcard orange">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top">
+          <div class="kcard-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <span class="kcard-tag tag-neu">Solar &amp; Roofing</span>
+        </div>
+        <div class="kcard-label">Leads Generados</div>
+        <div class="kcard-val">24</div>
+        <div class="kcard-sub">vía formulario Meta</div>
+      </div>
+      <div class="kcard green">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top">
+          <div class="kcard-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+        </div>
+        <div class="kcard-label">Costo por Lead</div>
+        <div class="kcard-val">$17<span style="font-size:15px">.46</span></div>
+        <div class="kcard-sub">USD por lead captado</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Embudo de Conversión</div>
+            <div class="card-sub">Del lead captado al cierre · Mayo 2026</div>
+          </div>
+          <span class="card-label">24 leads</span>
+        </div>
+        <div style="margin-bottom:22px;">
+          <div class="funnel-row"><div class="f-label">Leads captados</div><div class="f-bg"><div class="f-fill" style="width:100%;background:var(--blue);"></div></div><div class="f-num">24</div><div class="f-pct">100%</div></div>
+          <div class="funnel-row"><div class="f-label">Cita coordinada</div><div class="f-bg"><div class="f-fill" style="width:8.3%;background:var(--green);"></div></div><div class="f-num">2</div><div class="f-pct">8.3%</div></div>
+          <div class="funnel-row"><div class="f-label">Cita realizada</div><div class="f-bg"><div class="f-fill" style="width:4.1%;background:var(--orange);"></div></div><div class="f-num">1</div><div class="f-pct">4.1%</div></div>
+        </div>
+        <div style="height:150px;"><canvas id="chart-mayo"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Estatus de Leads</div>
+        <div class="card-sub">24 leads · Mayo 2026</div>
+        <div class="status-list">
+          <div class="status-item"><div class="s-dot dot-yellow"></div><div class="s-label">No contesta / Llamar después</div><div class="s-count">15</div><div class="s-pct">62.5%</div></div>
+          <div class="status-item"><div class="s-dot dot-red"></div><div class="s-label">No le interesa</div><div class="s-count">4</div><div class="s-pct">16.7%</div></div>
+          <div class="status-item"><div class="s-dot dot-green"></div><div class="s-label">Cita coordinada</div><div class="s-count">2</div><div class="s-pct">8.3%</div></div>
+          <div class="status-item"><div class="s-dot dot-blue"></div><div class="s-label">Lead nuevo</div><div class="s-count">1</div><div class="s-pct">4.2%</div></div>
+          <div class="status-item"><div class="s-dot dot-orange"></div><div class="s-label">Cita realizada</div><div class="s-count">1</div><div class="s-pct">4.2%</div></div>
+          <div class="status-item"><div class="s-dot dot-gray"></div><div class="s-label">Lead frío</div><div class="s-count">1</div><div class="s-pct">4.2%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row2-eq">
+      <div class="dbox green">
+        <div class="dbox-title">Decisión Estratégica — 31 Mayo 2026</div>
+        <div class="dbox-text">Se desactivaron los creativos de <strong>Solar</strong> y se mantuvieron únicamente los de <strong>Roofing</strong>, concentrando el presupuesto en el vertical con mayor potencial de conversión para junio.</div>
+      </div>
+      <div class="card" style="padding:18px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">Próximos Pasos</div>
+        <ul class="steps">
+          <li><div class="snum">1</div><span>Gestionar <strong>15 leads pendientes</strong> con mínimo 3 intentos de contacto antes de clasificar como frío.</span></li>
+          <li><div class="snum">2</div><span>Monitorear desempeño de <strong>Roofing en junio</strong> para validar mejora de CPL.</span></li>
+          <li><div class="snum">3</div><span>Establecer <strong>SLA de 24h</strong> de contacto máximo desde ingreso del lead.</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /tab-mayo -->
+
+  <!-- ══════════ TAB JUNIO ══════════ -->
+  <div id="tab-junio" class="tab-content">
+
+    <div class="kpi-grid g3">
+      <div class="kcard blue">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top">
+          <div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <span class="kcard-tag tag-neu">16 días</span>
+        </div>
+        <div class="kcard-label">Gasto Total</div>
+        <div class="kcard-val">$862<span style="font-size:15px">.00</span></div>
+        <div class="kcard-sub">USD · 16 días de pauta</div>
+      </div>
+      <div class="kcard orange">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top">
+          <div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <span class="kcard-tag tag-up">+2 vs mayo</span>
+        </div>
+        <div class="kcard-label">Leads Generados</div>
+        <div class="kcard-val">26</div>
+        <div class="kcard-sub">Solo Roofing activo</div>
+      </div>
+      <div class="kcard red">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top">
+          <div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <span class="kcard-tag tag-down">↑ vs mayo</span>
+        </div>
+        <div class="kcard-label">Costo por Lead</div>
+        <div class="kcard-val">$33<span style="font-size:15px">.15</span></div>
+        <div class="kcard-sub">USD por lead captado</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Embudo de Conversión</div>
+            <div class="card-sub">Junio parcial · 1–16 junio 2026</div>
+          </div>
+          <span class="card-label">26 leads</span>
+        </div>
+        <div style="margin-bottom:22px;">
+          <div class="funnel-row"><div class="f-label">Leads captados</div><div class="f-bg"><div class="f-fill" style="width:100%;background:var(--blue);"></div></div><div class="f-num">26</div><div class="f-pct">100%</div></div>
+          <div class="funnel-row"><div class="f-label">Cita coordinada</div><div class="f-bg"><div class="f-fill" style="width:19.2%;background:var(--green);"></div></div><div class="f-num">5</div><div class="f-pct">19.2%</div></div>
+          <div class="funnel-row"><div class="f-label">Leads en gestión</div><div class="f-bg"><div class="f-fill" style="width:19.2%;background:var(--orange);"></div></div><div class="f-num">5</div><div class="f-pct">19.2%</div></div>
+        </div>
+        <div style="height:150px;"><canvas id="chart-junio"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Estatus de Leads</div>
+        <div class="card-sub">26 leads · Junio 2026</div>
+        <div class="status-list">
+          <div class="status-item"><div class="s-dot dot-yellow"></div><div class="s-label">No contesta / Llamar después</div><div class="s-count">11</div><div class="s-pct">42.3%</div></div>
+          <div class="status-item"><div class="s-dot dot-blue"></div><div class="s-label">Lead nuevo (sin gestión)</div><div class="s-count">5</div><div class="s-pct">19.2%</div></div>
+          <div class="status-item"><div class="s-dot dot-green"></div><div class="s-label">Cita coordinada</div><div class="s-count">5</div><div class="s-pct">19.2%</div></div>
+          <div class="status-item"><div class="s-dot dot-red"></div><div class="s-label">No le interesa</div><div class="s-count">3</div><div class="s-pct">11.5%</div></div>
+          <div class="status-item"><div class="s-dot dot-gray"></div><div class="s-label">Lead frío</div><div class="s-count">1</div><div class="s-pct">3.8%</div></div>
+          <div class="status-item"><div class="s-dot dot-orange"></div><div class="s-label">Cliente doble formulario</div><div class="s-count">1</div><div class="s-pct">3.8%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-hd" style="margin-bottom:14px;">
+        <div>
+          <div class="card-title">Comparativa Mayo vs Junio</div>
+          <div class="card-sub" style="margin-bottom:0;">* Junio parcial: 16 días vs 31 días de mayo</div>
+        </div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Métrica</th><th>Mayo</th><th>Junio*</th><th>Variación</th></tr></thead>
+        <tbody>
+          <tr><td>Gasto total</td><td>$436.58</td><td>$862.00</td><td><span class="pill pill-dn">↑ $425.42</span></td></tr>
+          <tr><td>Leads generados</td><td>24</td><td>26</td><td><span class="pill pill-up">↑ +2</span></td></tr>
+          <tr><td>Costo por lead</td><td>$17.46</td><td>$33.15</td><td><span class="pill pill-dn">↑ 89.9%</span></td></tr>
+          <tr><td>Citas coordinadas</td><td>2</td><td>5</td><td><span class="pill pill-up">↑ +150%</span></td></tr>
+          <tr><td>No contesta</td><td>15 (62.5%)</td><td>11 (42.3%)</td><td><span class="pill pill-up">↓ 20 pts</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row2-eq">
+      <div class="dbox green">
+        <div class="dbox-title">Contexto Estratégico · Junio</div>
+        <div class="dbox-text">La pauta corre <strong>solo con Roofing</strong> desde el 31 de mayo. En 16 días superó mayo en leads. Las citas coordinadas subieron un <strong>150%</strong> (de 2 a 5).</div>
+      </div>
+      <div class="card" style="padding:18px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">Próximos Pasos</div>
+        <ul class="steps">
+          <li><div class="snum">1</div><span>Gestionar <strong>5 leads nuevos</strong> como prioridad inmediata.</span></li>
+          <li><div class="snum">2</div><span>Dar seguimiento a <strong>11 "no contesta"</strong> con mínimo 3 intentos.</span></li>
+          <li><div class="snum">3</div><span>Confirmar y ejecutar las <strong>5 citas coordinadas</strong>.</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /tab-junio -->
+
+  <!-- ══════════ TAB JULIO ══════════ -->
+  <div id="tab-julio" class="tab-content">
+
+    <div class="kpi-grid g4">
+      <div class="kcard blue">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="kcard-tag tag-neu">21 días</span></div>
+        <div class="kcard-label">Gasto Total</div>
+        <div class="kcard-val" style="font-size:20px;">$1,042<span style="font-size:13px">.38</span></div>
+        <div class="kcard-sub">USD invertidos</div>
+      </div>
+      <div class="kcard orange">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><span class="kcard-tag tag-up">Máximo histórico</span></div>
+        <div class="kcard-label">Leads Generados</div>
+        <div class="kcard-val">307</div>
+        <div class="kcard-sub">Solar &amp; Roofing</div>
+      </div>
+      <div class="kcard green">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="kcard-tag tag-up">CPL mínimo</span></div>
+        <div class="kcard-label">Costo por Lead</div>
+        <div class="kcard-val">$3<span style="font-size:15px">.39</span></div>
+        <div class="kcard-sub">USD por lead</div>
+      </div>
+      <div class="kcard purple">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span class="kcard-tag tag-up">76x ROI</span></div>
+        <div class="kcard-label">Ventas Cerradas</div>
+        <div class="kcard-val" style="font-size:20px;">$80,019</div>
+        <div class="kcard-sub">en ventas efectivas</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Leads por Vertical</div>
+            <div class="card-sub">307 leads · 1–21 julio 2026</div>
+          </div>
+          <span class="card-label">21 días</span>
+        </div>
+        <div style="margin-bottom:22px;">
+          <div class="funnel-row"><div class="f-label">Roofing</div><div class="f-bg"><div class="f-fill" style="width:90.2%;background:var(--blue);"></div></div><div class="f-num">277</div><div class="f-pct">90.2%</div></div>
+          <div class="funnel-row"><div class="f-label">Solar</div><div class="f-bg"><div class="f-fill" style="width:9.8%;background:var(--orange);"></div></div><div class="f-num">30</div><div class="f-pct">9.8%</div></div>
+        </div>
+        <div style="height:150px;"><canvas id="chart-julio"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Ventas Efectivas</div>
+        <div class="card-sub">Leads convertidos en cierre</div>
+        <div class="venta-block">
+          <div class="v-id">Lead L815537</div>
+          <div class="v-row"><div class="v-tipo">Solar</div><div class="v-monto">$18,716.50</div></div>
+          <div class="v-row"><div class="v-tipo">Roofing</div><div class="v-monto">$13,546.45</div></div>
+          <div class="v-row"><div class="v-tipo">Subtotal</div><div class="v-monto">$32,262.95</div></div>
+        </div>
+        <div class="venta-block">
+          <div class="v-id">Lead L816743</div>
+          <div class="v-row"><div class="v-tipo">Solar</div><div class="v-monto">$47,756.40</div></div>
+          <div class="v-row"><div class="v-tipo">Subtotal</div><div class="v-monto">$47,756.40</div></div>
+        </div>
+        <div class="v-total-bar"><span>Total en Ventas</span><span>$80,019.35</span></div>
+      </div>
+    </div>
+
+    <div class="row2-eq">
+      <div class="dbox orange">
+        <div class="dbox-title">Decisión Estratégica — 21 Julio 2026</div>
+        <div class="dbox-text">Se decidió <strong>pausar la pauta anticipadamente</strong> para concentrar esfuerzos en la gestión de los <strong>307 leads ingresados</strong>. Para agosto: refresh de artes en creativos de bajo rendimiento y continuación de los que funcionan.</div>
+      </div>
+      <div class="card" style="padding:18px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">Plan Agosto 2026</div>
+        <ul class="steps">
+          <li><div class="snum">1</div><span>Trabajar el <strong>pipeline de 307 leads</strong> antes de reactivar pauta.</span></li>
+          <li><div class="snum">2</div><span>Realizar <strong>refresh de creativos</strong> con bajo rendimiento.</span></li>
+          <li><div class="snum">3</div><span>Reactivar pauta con <strong>CPL objetivo menor a $3.39</strong>.</span></li>
+          <li><div class="snum">4</div><span>Documentar L815537 y L816743 como <strong>casos de éxito</strong>.</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /tab-julio -->
+
+  <!-- ══════════ TAB KPIS ══════════ -->
+  <div id="tab-kpis" class="tab-content">
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:20px;font-weight:800;color:var(--text);margin-bottom:3px;">KPIs Globales</div>
+      <div style="font-size:11px;color:var(--text-muted);">Acumulado Mayo – Julio 2026 · 357 leads · $2,340.96 invertidos · $80,019.35 en ventas</div>
+    </div>
+
+    <!-- ROI y ROAS -->
+    <div class="row2-eq" style="margin-bottom:18px;">
+      <div class="roi-big g">
+        <div class="roi-top">
+          <div>
+            <div class="roi-label">ROI · Return on Investment</div>
+            <div class="roi-val-big">33.17<span style="font-size:22px;">x</span></div>
+          </div>
+          <div class="roi-badge">
+            <div class="roi-badge-val">3,317%</div>
+            <div class="roi-badge-sub">retorno</div>
+          </div>
+        </div>
+        <div class="roi-detail">
+          <div class="roi-detail-row"><span>Inversión total</span><strong>$2,340.96</strong></div>
+          <div class="roi-detail-row"><span>Ventas cerradas</span><strong>$80,019.35</strong></div>
+          <div class="roi-detail-row"><span>Ganancia neta</span><strong>$77,678.39</strong></div>
+        </div>
+        <div class="roi-note">Cada $1 invertido generó <strong>$33.17 en ganancia neta</strong></div>
+      </div>
+      <div class="roi-big b">
+        <div class="roi-top">
+          <div>
+            <div class="roi-label">ROAS · Return on Ad Spend</div>
+            <div class="roi-val-big">$34.18</div>
+          </div>
+          <div class="roi-badge">
+            <div class="roi-badge-val">por $1</div>
+            <div class="roi-badge-sub">invertido</div>
+          </div>
+        </div>
+        <div class="roi-detail">
+          <div class="roi-detail-row"><span>Gasto en pauta</span><strong>$2,340.96</strong></div>
+          <div class="roi-detail-row"><span>Ingresos generados</span><strong>$80,019.35</strong></div>
+          <div class="roi-detail-row"><span>Ratio</span><strong>34.18 : 1</strong></div>
+        </div>
+        <div class="roi-note">Por cada $1 en anuncios se recuperaron <strong>$34.18 en ventas</strong></div>
+      </div>
+    </div>
+
+    <!-- 4 métricas -->
+    <div class="kpi-grid g4" style="margin-bottom:18px;">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:var(--orange-light);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="metric-label">Tasa de Conversión</div>
+        <div class="metric-val" style="color:var(--orange);">0.56%</div>
+        <div class="metric-sub">2 clientes de 357 leads</div>
+        <div class="metric-formula">Leads → Clientes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon" style="background:var(--blue-light);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="metric-label">CAC</div>
+        <div class="metric-val" style="color:var(--blue);">$1,170<span style="font-size:16px">.48</span></div>
+        <div class="metric-sub">costo por cliente adquirido</div>
+        <div class="metric-formula">$2,340.96 ÷ 2</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon" style="background:var(--blue-light);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+        <div class="metric-label">Costo por Lead</div>
+        <div class="metric-val" style="color:var(--blue);">$6<span style="font-size:16px">.56</span></div>
+        <div class="metric-sub">acumulado 3 meses</div>
+        <div class="metric-formula">$2,340.96 ÷ 357</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon" style="background:var(--orange-light);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="metric-label">Tasa de Cierre</div>
+        <div class="metric-val" style="color:var(--orange);">11.76%</div>
+        <div class="metric-sub">2 de 17 citas coordinadas</div>
+        <div class="metric-formula">Citas → Clientes</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-hd">
+        <div>
+          <div class="card-title">Performance Mensual</div>
+          <div class="card-sub">Leads y gasto por mes</div>
+        </div>
+      </div>
+      <div style="height:260px;">
+        <canvas id="chart-kpis"></canvas>
+      </div>
+    </div>
+
+    <!-- Oportunidades + Resumen -->
+    <div class="row2-eq">
+      <div class="opp-card">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--purple);">Oportunidades Activas</div>
+        <div class="opp-num">15</div>
+        <div style="font-size:12px;color:#7c3aed;margin-bottom:12px;">citas coordinadas pendientes de cierre</div>
+        <div class="opp-detail">
+          <div class="opp-row"><span>Total citas coordinadas</span><strong>17</strong></div>
+          <div class="opp-row"><span>Convertidas en venta</span><strong>2</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;">Resumen Acumulado · 3 Meses</div>
+        <div class="sum-row"><div class="sum-lbl">Meses activos</div><div class="sum-val">3</div></div>
+        <div class="sum-row"><div class="sum-lbl">Inversión total</div><div class="sum-val" style="color:var(--blue);">$2,340.96</div></div>
+        <div class="sum-row"><div class="sum-lbl">Leads generados</div><div class="sum-val">357</div></div>
+        <div class="sum-row"><div class="sum-lbl">Citas coordinadas</div><div class="sum-val">17</div></div>
+        <div class="sum-row"><div class="sum-lbl">Clientes adquiridos</div><div class="sum-val">2</div></div>
+        <div class="sum-row"><div class="sum-lbl">Ventas cerradas</div><div class="sum-val" style="color:var(--green);">$80,019.35</div></div>
+      </div>
+    </div>
+
+  </div><!-- /tab-kpis -->
+
+  </div><!-- /content -->
+
+  <div class="footer">Del Norte by Windmar Home · Meta Ads Report · Mayo – Julio 2026</div>
+
+</div><!-- /main -->
+
+<script>
+const chartInstances = {};
+
+const chartConfigs = {
+  mayo: {
+    id:'chart-mayo',
+    type:'bar',
+    labels:['Leads captados','Cita coordinada','Cita realizada'],
+    data:[24,2,1],
+    colors:['#3b6cf4','#22c55e','#f97316']
+  },
+  junio: {
+    id:'chart-junio',
+    type:'bar',
+    labels:['Leads captados','Cita coordinada','Gestión activa'],
+    data:[26,5,5],
+    colors:['#3b6cf4','#22c55e','#f97316']
+  },
+  julio: {
+    id:'chart-julio',
+    type:'doughnut',
+    labels:['Roofing','Solar'],
+    data:[277,30],
+    colors:['#3b6cf4','#f97316']
+  },
+  kpis: {
+    id:'chart-kpis',
+    type:'line',
+    labels:['Mayo','Junio','Julio'],
+    datasets:[
+      { label:'Gasto', data:[436.58,862.00,1042.38], borderColor:'#3b6cf4', backgroundColor:'rgba(59,108,244,0.18)', tension:0.3, fill:true, pointRadius:4, pointBackgroundColor:'#3b6cf4' },
+      { label:'Leads', data:[24,26,307], borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.18)', tension:0.3, fill:true, pointRadius:4, pointBackgroundColor:'#f97316' }
+    ]
+  }
+};
+
+function renderChart(tab) {
+  const cfg = chartConfigs[tab];
+  if (!cfg) return;
+  if (chartInstances[tab]) { chartInstances[tab].destroy(); delete chartInstances[tab]; }
+  const el = document.getElementById(cfg.id);
+  if (!el) return;
+
+  const defaultOptions = {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ font:{ family:'Montserrat', size:11 }, color:'#64748b', boxWidth:10, padding:14 } } }
+  };
+
+  const options = cfg.type === 'doughnut'
+    ? { ...defaultOptions, cutout:'70%' }
+    : { ...defaultOptions, plugins:{ ...defaultOptions.plugins, legend:{ display:tab==='kpis'?true:false, position:'top' } }, scales:{ x:{ grid:{ display:false }, ticks:{ font:{ family:'Montserrat', size:11 }, color:'#94a3b8' } }, y:{ grid:{ color:'#f0f2f8' }, ticks:{ font:{ family:'Montserrat', size:10 }, color:'#94a3b8' } } } };
+
+  const chartData = cfg.type === 'line' ? { labels:cfg.labels, datasets:cfg.datasets } : { labels: cfg.labels, datasets:[{ data:cfg.data, backgroundColor:cfg.colors, borderRadius: cfg.type==='bar'?8:0, borderSkipped:false, borderWidth: cfg.type==='doughnut'?3:0, borderColor:'#fff' }] };
+
+  chartInstances[tab] = new Chart(el, {
+    type: cfg.type,
+    data: chartData,
+    options
+  });
+}
+
+const pageTitles = { mayo:'Mayo 2026', junio:'Junio 2026', julio:'Julio 2026', kpis:'KPIs Globales' };
+const pageBadges = { mayo:'Solar & Roofing · 31 días', junio:'Solo Roofing · 16 días', julio:'Solar & Roofing · 21 días', kpis:'Acumulado Mayo – Julio 2026' };
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item[data-tab]').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelector('.nav-item[data-tab="'+tab+'"]').classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[tab] || tab;
+  document.getElementById('page-badge').textContent = pageBadges[tab] || '';
+  setTimeout(() => renderChart(tab), 50);
+}
+
+document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
+  btn.addEventListener('click', function() { switchTab(this.getAttribute('data-tab')); });
+});
+
+renderChart('mayo');
+</script>
+</body>
+</html>
