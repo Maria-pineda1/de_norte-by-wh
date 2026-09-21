@@ -93,13 +93,17 @@ body {
   width:20px;
   height:20px;
 }
+.sidebar-brand { padding:18px 16px; border-bottom:1px solid var(--border); }
+.brand-logo { display:flex; align-items:center; gap:10px; }
 .brand-icon {
-  width: 34px; height: 34px;
+  width: 30px; height: 30px;
+  flex-shrink: 0;
   background: var(--blue);
-  border-radius: 9px;
+  border-radius: 8px;
   display: flex; align-items:center; justify-content:center;
 }
-.brand-icon svg { width:18px; height:18px; }
+.brand-icon svg { width:15px; height:15px; }
+.brand-text { min-width:0; }
 .brand-text .name { font-size:13px; font-weight:800; color:var(--text); line-height:1.2; }
 .brand-text .sub  { font-size:10px; color:var(--text-muted); font-weight:500; margin-top:1px; }
 
@@ -161,113 +165,6 @@ body {
   font-size:10px; font-weight:700;
   padding:4px 10px; border-radius:99px;
   letter-spacing:0.3px;
-}
-@media (max-width: 900px) {
-  body { display:block; }
-  .sidebar {
-    transform: translateX(-100%);
-    width: min(92vw, 260px);
-    max-width: 260px;
-    box-shadow: 0 18px 50px rgba(15,23,42,0.15);
-  }
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  .main { margin-left:0; width:100%; }
-  .topbar { padding:0 18px; flex-wrap:wrap; gap:10px; }
-  .topbar-title { flex:1 1 100%; }
-  .topbar-right { gap:8px; }
-  .content { padding:18px 14px; }
-  .menu-toggle { display:flex; }
-  .sidebar-footer { display:none; }
-  .sidebar-nav { padding:16px 14px 24px; }
-  .kpi-grid.g3, .kpi-grid.g4, .row2, .row2-eq, .row3 {
-    grid-template-columns:1fr;
-    width:100%;
-    min-width:0;
-  }
-  .row2, .row2-eq, .row3 { gap:16px; }
-  .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard {
-    padding:18px 16px;
-    border-color:rgba(148,163,184,0.16);
-    box-shadow:0 10px 20px rgba(15,23,42,0.06);
-    width:100%;
-    min-width:0;
-  }
-  .footer { padding:16px 18px; }
-  .nav-item { padding:12px 10px; }
-  .nav-item svg { width:18px; height:18px; }
-  .f-label { width:auto; min-width:90px; }
-  .f-num, .f-pct { min-width:32px; width:auto; }
-  .status-item { padding:10px 10px; flex-wrap:wrap; }
-  .venta-block { padding:12px 14px; }
-  .topbar-right { width:100%; justify-content:flex-start; }
-  .topbar-badge { width:auto; }
-  .card-hd, .roi-top, .roi-row, .roi-detail-row, .opp-row, .funnel-row, .sum-row {
-    flex-wrap:wrap;
-    gap:8px;
-  }
-  .funnel-row { justify-content:flex-start; }
-}
-@media (max-width: 650px) {
-  .topbar { height:auto; padding:12px 16px; align-items:flex-start; gap:10px; }
-  .menu-toggle { order:-1; }
-  .topbar-title { font-size:16px; }
-  .topbar-sub { font-size:10px; }
-  .topbar-right { display:none; }
-  .content { padding:14px 12px; }
-  .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard { padding:16px 14px; width:100%; min-width:0; }
-  .kcard { padding:16px 16px; }
-  .kcard-val { font-size:22px; word-break:break-word; }
-  .metric-card { padding:16px 14px; }
-  .metric-val { font-size:24px; word-break:break-word; }
-  .f-label { width:100px; font-size:10px; }
-  .f-num, .f-pct { font-size:12px; }
-  .sidebar {
-    width: min(88vw, 240px);
-  }
-  .sidebar-nav { padding:14px 12px; }
-  .nav-item { padding:10px 10px; }
-  .sidebar-footer { display:none; }
-  .topbar { justify-content:space-between; }
-  .metric-card, .kcard, .card { min-height: auto; }
-  .roi-big { padding:16px 14px; }
-  .metric-formula { white-space:normal; }
-  .card-title, .roi-label, .metric-label { font-size:12px; }
-  .topbar-right { width:100%; justify-content:flex-start; }
-  .kpi-grid.g4, .kpi-grid.g3, .row2, .row2-eq, .row3 {
-    grid-template-columns:1fr;
-    width:100%;
-    min-width:0;
-  }
-  .kpi-grid { gap:12px; }
-  .row2, .row2-eq, .row3 { gap:14px; }
-  .roi-top, .roi-detail-row, .opp-row, .sum-row, .funnel-row {
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-  }
-  .roi-detail-row, .opp-row, .sum-row, .funnel-row {
-    justify-content:flex-start;
-  }
-  .roi-detail, .metric-formula, .card-sub {
-    font-size:11px;
-  }
-  .metric-sub, .kcard-sub { white-space:normal; }
-  .kcard-top, .card-hd, .roi-top, .roi-detail-row, .opp-row, .sum-row, .funnel-row {
-    flex-wrap:wrap;
-    gap:10px;
-  }
-  .kcard-tag { width:auto; }
-  .metric-card, .kcard, .card, .dbox, .roi-big, .opp-card {
-    width:100%;
-  }
-  .chart-container, #chart-kpis {
-    min-height:260px;
-  }
-  .card canvas, .card video, .card img { max-width:100%; }
-  .nav-item { font-size:13px; }
-  .topbar-badge { font-size:9px; padding:4px 8px; }
 }
 /* CONTENT */
 .content { padding:24px 28px; flex:1; }
@@ -488,6 +385,128 @@ body {
 
 /* ─── SVG ICONS inline ─── */
 .ic { display:inline-block; vertical-align:middle; }
+
+/* ─── RESPONSIVE (kept last so overrides win the cascade) ─── */
+@media (max-width: 900px) {
+  body { display:block; }
+  .sidebar {
+    transform: translateX(-100%);
+    width: min(92vw, 260px);
+    max-width: 260px;
+    box-shadow: 0 18px 50px rgba(15,23,42,0.15);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main { margin-left:0; width:100%; }
+  .topbar { padding:0 18px; flex-wrap:wrap; gap:10px; }
+  .topbar-title { flex:1 1 100%; }
+  .topbar-right { gap:8px; }
+  .content { padding:18px 14px; }
+  .menu-toggle { display:flex; }
+  .sidebar-footer { display:none; }
+  .sidebar-nav { padding:16px 14px 24px; }
+  .kpi-grid.g3, .kpi-grid.g4, .row2, .row2-eq, .row3 {
+    grid-template-columns:1fr;
+    width:100%;
+    min-width:0;
+  }
+  .row2, .row2-eq, .row3 { gap:16px; }
+  .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard {
+    padding:18px 16px;
+    border-color:rgba(148,163,184,0.16);
+    box-shadow:0 10px 20px rgba(15,23,42,0.06);
+    width:100%;
+    min-width:0;
+  }
+  .footer { padding:16px 18px; }
+  .nav-item { padding:12px 10px; }
+  .nav-item svg { width:18px; height:18px; }
+  .f-label { width:auto; min-width:90px; }
+  .f-num, .f-pct { min-width:32px; width:auto; }
+  .status-item { padding:10px 10px; flex-wrap:wrap; }
+  .venta-block { padding:12px 14px; }
+  .topbar-right { width:100%; justify-content:flex-start; }
+  .topbar-badge { width:auto; }
+  .card-hd, .roi-top, .roi-row, .roi-detail-row, .opp-row, .funnel-row, .sum-row {
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .funnel-row { justify-content:flex-start; }
+}
+@media (max-width: 650px) {
+  .topbar { height:auto; padding:12px 16px; align-items:flex-start; gap:10px; }
+  .menu-toggle { order:-1; }
+  .topbar-title { font-size:16px; }
+  .topbar-sub { font-size:10px; }
+  .topbar-right { display:none; }
+  .content { padding:14px 12px; }
+  .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard { padding:16px 14px; width:100%; min-width:0; }
+  .kcard { padding:16px 16px; }
+  .kcard-val { font-size:22px; word-break:break-word; }
+  .metric-card { padding:16px 14px; }
+  .metric-val { font-size:24px; word-break:break-word; }
+  .f-label { width:100px; font-size:10px; }
+  .f-num, .f-pct { font-size:12px; }
+  .sidebar {
+    width: min(88vw, 240px);
+  }
+  .sidebar-nav { padding:14px 12px; }
+  .nav-item { padding:10px 10px; }
+  .sidebar-footer { display:none; }
+  .topbar { justify-content:space-between; }
+  .metric-card, .kcard, .card { min-height: auto; }
+  .roi-big { padding:16px 14px; }
+  .roi-val-big { font-size:32px; }
+  .roi-badge-val { font-size:11px; }
+  .opp-num { font-size:40px; }
+  .metric-formula { white-space:normal; }
+  .card-title, .roi-label, .metric-label { font-size:12px; }
+  .topbar-right { width:100%; justify-content:flex-start; }
+  .kpi-grid.g4, .kpi-grid.g3, .row2, .row2-eq, .row3 {
+    grid-template-columns:1fr;
+    width:100%;
+    min-width:0;
+  }
+  .kpi-grid { gap:12px; }
+  .row2, .row2-eq, .row3 { gap:14px; }
+  .roi-top, .roi-detail-row, .opp-row, .sum-row {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .roi-detail-row, .opp-row, .sum-row {
+    justify-content:flex-start;
+  }
+  .funnel-row {
+    flex-wrap:wrap;
+    row-gap:6px;
+  }
+  .f-label {
+    width:100%;
+    order:-1;
+  }
+  .f-bg { flex:1 1 auto; min-width:0; }
+  .roi-detail, .metric-formula, .card-sub {
+    font-size:11px;
+  }
+  .metric-sub, .kcard-sub { white-space:normal; }
+  .kcard-top, .card-hd, .roi-top, .roi-detail-row, .opp-row, .sum-row, .funnel-row {
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .kcard-tag { width:auto; }
+  .metric-card, .kcard, .card, .dbox, .roi-big, .opp-card {
+    width:100%;
+  }
+  .chart-container, #chart-kpis {
+    min-height:260px;
+  }
+  .card canvas, .card video, .card img { max-width:100%; }
+  .nav-item { font-size:13px; }
+  .topbar-badge { font-size:9px; padding:4px 8px; }
+  .tbl { display:block; overflow-x:auto; white-space:nowrap; }
+}
 </style>
 </head>
 <body>
