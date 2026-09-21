@@ -163,6 +163,7 @@ body {
   letter-spacing:0.3px;
 }
 @media (max-width: 900px) {
+  body { display:block; }
   .sidebar {
     transform: translateX(-100%);
     width: min(92vw, 260px);
@@ -172,35 +173,41 @@ body {
   .sidebar.open {
     transform: translateX(0);
   }
-  .main { margin-left:0; }
+  .main { margin-left:0; width:100%; }
   .topbar { padding:0 18px; flex-wrap:wrap; gap:10px; }
   .topbar-title { flex:1 1 100%; }
   .topbar-right { gap:8px; }
-  .content { padding:18px; }
+  .content { padding:18px 14px; }
   .menu-toggle { display:flex; }
   .sidebar-footer { display:none; }
   .sidebar-nav { padding:16px 14px 24px; }
   .kpi-grid.g3, .kpi-grid.g4, .row2, .row2-eq, .row3 {
     grid-template-columns:1fr;
+    width:100%;
+    min-width:0;
   }
   .row2, .row2-eq, .row3 { gap:16px; }
   .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard {
     padding:18px 16px;
     border-color:rgba(148,163,184,0.16);
     box-shadow:0 10px 20px rgba(15,23,42,0.06);
+    width:100%;
+    min-width:0;
   }
   .footer { padding:16px 18px; }
   .nav-item { padding:12px 10px; }
   .nav-item svg { width:18px; height:18px; }
-  .f-label { width:120px; }
-  .status-item { padding:10px 10px; }
+  .f-label { width:auto; min-width:90px; }
+  .f-num, .f-pct { min-width:32px; width:auto; }
+  .status-item { padding:10px 10px; flex-wrap:wrap; }
   .venta-block { padding:12px 14px; }
   .topbar-right { width:100%; justify-content:flex-start; }
   .topbar-badge { width:auto; }
-  .card-hd, .roi-top, .opp-row, .funnel-row, .sum-row {
+  .card-hd, .roi-top, .roi-row, .roi-detail-row, .opp-row, .funnel-row, .sum-row {
     flex-wrap:wrap;
     gap:8px;
   }
+  .funnel-row { justify-content:flex-start; }
 }
 @media (max-width: 650px) {
   .topbar { height:auto; padding:12px 16px; align-items:flex-start; gap:10px; }
@@ -208,12 +215,12 @@ body {
   .topbar-title { font-size:16px; }
   .topbar-sub { font-size:10px; }
   .topbar-right { display:none; }
-  .content { padding:14px; }
-  .card, .dbox, .roi-big, .opp-card { padding:16px 14px; }
+  .content { padding:14px 12px; }
+  .card, .dbox, .roi-big, .opp-card, .metric-card, .kcard { padding:16px 14px; width:100%; min-width:0; }
   .kcard { padding:16px 16px; }
-  .kcard-val { font-size:22px; }
+  .kcard-val { font-size:22px; word-break:break-word; }
   .metric-card { padding:16px 14px; }
-  .metric-val { font-size:24px; }
+  .metric-val { font-size:24px; word-break:break-word; }
   .f-label { width:100px; font-size:10px; }
   .f-num, .f-pct { font-size:12px; }
   .sidebar {
@@ -230,6 +237,8 @@ body {
   .topbar-right { width:100%; justify-content:flex-start; }
   .kpi-grid.g4, .kpi-grid.g3, .row2, .row2-eq, .row3 {
     grid-template-columns:1fr;
+    width:100%;
+    min-width:0;
   }
   .kpi-grid { gap:12px; }
   .row2, .row2-eq, .row3 { gap:14px; }
@@ -244,12 +253,19 @@ body {
   .roi-detail, .metric-formula, .card-sub {
     font-size:11px;
   }
+  .metric-sub, .kcard-sub { white-space:normal; }
+  .kcard-top, .card-hd, .roi-top, .roi-detail-row, .opp-row, .sum-row, .funnel-row {
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .kcard-tag { width:auto; }
   .metric-card, .kcard, .card, .dbox, .roi-big, .opp-card {
     width:100%;
   }
   .chart-container, #chart-kpis {
     min-height:260px;
   }
+  .card canvas, .card video, .card img { max-width:100%; }
   .nav-item { font-size:13px; }
   .topbar-badge { font-size:9px; padding:4px 8px; }
 }
@@ -505,6 +521,10 @@ body {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Julio 2026
     </div>
+    <div class="nav-item" data-tab="agosto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agosto 2026
+    </div>
 
     <div class="nav-section-label">Análisis</div>
     <div class="nav-item" data-tab="kpis">
@@ -514,9 +534,9 @@ body {
   </nav>
 
   <div class="sidebar-footer">
-    <div class="footer-label">Ventas · 3 meses</div>
-    <div class="footer-val">$80,019</div>
-    <div class="footer-sub">ROI 33.17x · ROAS $34.18</div>
+    <div class="footer-label">Ventas · 4 meses</div>
+    <div class="footer-val">$94,812</div>
+    <div class="footer-sub">ROI 27.49x · ROAS $28.49</div>
   </div>
 </aside>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -815,12 +835,91 @@ body {
 
   </div><!-- /tab-julio -->
 
+  <!-- ══════════ TAB AGOSTO ══════════ -->
+  <div id="tab-agosto" class="tab-content">
+
+    <div class="kpi-grid g4">
+      <div class="kcard blue">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="kcard-tag tag-neu">31 días</span></div>
+        <div class="kcard-label">Gasto Total</div>
+        <div class="kcard-val">$986<span style="font-size:15px">.79</span></div>
+        <div class="kcard-sub">USD invertidos en el mes</div>
+      </div>
+      <div class="kcard orange">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><span class="kcard-tag tag-up">Nuevo canal: WhatsApp</span></div>
+        <div class="kcard-label">Leads Generados</div>
+        <div class="kcard-val">203</div>
+        <div class="kcard-sub">39 CRM + 164 mensajes WhatsApp</div>
+      </div>
+      <div class="kcard green">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="kcard-tag tag-up">CPL mínimo</span></div>
+        <div class="kcard-label">Costo por Lead</div>
+        <div class="kcard-val">$4<span style="font-size:15px">.86</span></div>
+        <div class="kcard-sub">USD por lead (39 CRM + 164 WhatsApp)</div>
+      </div>
+      <div class="kcard purple">
+        <div class="kcard-accent"></div>
+        <div class="kcard-top"><div class="kcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span class="kcard-tag tag-up">Roofing</span></div>
+        <div class="kcard-label">Ventas Cerradas</div>
+        <div class="kcard-val">$14<span style="font-size:15px">,792.43</span></div>
+        <div class="kcard-sub">en ventas efectivas</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="card">
+        <div class="card-hd">
+          <div>
+            <div class="card-title">Leads por Canal</div>
+            <div class="card-sub">203 leads · Agosto 2026</div>
+          </div>
+          <span class="card-label">31 días</span>
+        </div>
+        <div style="margin-bottom:22px;">
+          <div class="funnel-row"><div class="f-label">WhatsApp</div><div class="f-bg"><div class="f-fill" style="width:80.8%;background:var(--green);"></div></div><div class="f-num">164</div><div class="f-pct">80.8%</div></div>
+          <div class="funnel-row"><div class="f-label">CRM (formulario)</div><div class="f-bg"><div class="f-fill" style="width:19.2%;background:var(--blue);"></div></div><div class="f-num">39</div><div class="f-pct">19.2%</div></div>
+        </div>
+        <div style="height:150px;"><canvas id="chart-agosto"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Ventas Efectivas</div>
+        <div class="card-sub">Leads convertidos en cierre</div>
+        <div class="venta-block">
+          <div class="v-id">Lead L825887</div>
+          <div class="v-row"><div class="v-tipo">Roofing</div><div class="v-monto">$14,792.43</div></div>
+          <div class="v-row"><div class="v-tipo">Subtotal</div><div class="v-monto">$14,792.43</div></div>
+        </div>
+        <div class="v-total-bar"><span>Total en Ventas</span><span>$14,792.43</span></div>
+      </div>
+    </div>
+
+    <div class="row2-eq">
+      <div class="dbox green">
+        <div class="dbox-title">Contexto Estratégico · Agosto</div>
+        <div class="dbox-text">Se sumó <strong>WhatsApp</strong> como canal adicional de captación, generando <strong>164 mensajes</strong> que se suman a los <strong>39 leads del CRM</strong>, manteniendo un CPL bajo de <strong>$4.86</strong>. Se confirmó un cierre de <strong>Roofing por $14,792.43</strong> (Lead L825887).</div>
+      </div>
+      <div class="card" style="padding:18px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">Próximos Pasos</div>
+        <ul class="steps">
+          <li><div class="snum">1</div><span>Gestionar los <strong>39 leads del CRM</strong> con seguimiento estructurado.</span></li>
+          <li><div class="snum">2</div><span>Dar respuesta oportuna a los <strong>164 mensajes de WhatsApp</strong> para calificarlos como leads.</span></li>
+          <li><div class="snum">3</div><span>Documentar <strong>L825887</strong> como caso de éxito de Roofing.</span></li>
+          <li><div class="snum">4</div><span>Definir un proceso formal para registrar los leads de WhatsApp en el CRM.</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /tab-agosto -->
+
   <!-- ══════════ TAB KPIS ══════════ -->
   <div id="tab-kpis" class="tab-content">
 
     <div style="margin-bottom:20px;">
       <div style="font-size:20px;font-weight:800;color:var(--text);margin-bottom:3px;">KPIs Globales</div>
-      <div style="font-size:11px;color:var(--text-muted);">Acumulado Mayo – Julio 2026 · 357 leads · $2,340.96 invertidos · $80,019.35 en ventas</div>
+      <div style="font-size:11px;color:var(--text-muted);">Acumulado Mayo – Agosto 2026 · 560 leads · $3,327.75 invertidos · $94,811.78 en ventas</div>
     </div>
 
     <!-- ROI y ROAS -->
@@ -829,25 +928,25 @@ body {
         <div class="roi-top">
           <div>
             <div class="roi-label">ROI · Return on Investment</div>
-            <div class="roi-val-big">33.17<span style="font-size:22px;">x</span></div>
+            <div class="roi-val-big">27.49<span style="font-size:22px;">x</span></div>
           </div>
           <div class="roi-badge">
-            <div class="roi-badge-val">3,317%</div>
+            <div class="roi-badge-val">2,749%</div>
             <div class="roi-badge-sub">retorno</div>
           </div>
         </div>
         <div class="roi-detail">
-          <div class="roi-detail-row"><span>Inversión total</span><strong>$2,340.96</strong></div>
-          <div class="roi-detail-row"><span>Ventas cerradas</span><strong>$80,019.35</strong></div>
-          <div class="roi-detail-row"><span>Ganancia neta</span><strong>$77,678.39</strong></div>
+          <div class="roi-detail-row"><span>Inversión total</span><strong>$3,327.75</strong></div>
+          <div class="roi-detail-row"><span>Ventas cerradas</span><strong>$94,811.78</strong></div>
+          <div class="roi-detail-row"><span>Ganancia neta</span><strong>$91,484.03</strong></div>
         </div>
-        <div class="roi-note">Cada $1 invertido generó <strong>$33.17 en ganancia neta</strong></div>
+        <div class="roi-note">Cada $1 invertido generó <strong>$27.49 en ganancia neta</strong></div>
       </div>
       <div class="roi-big b">
         <div class="roi-top">
           <div>
             <div class="roi-label">ROAS · Return on Ad Spend</div>
-            <div class="roi-val-big">$34.18</div>
+            <div class="roi-val-big">$28.49</div>
           </div>
           <div class="roi-badge">
             <div class="roi-badge-val">por $1</div>
@@ -855,11 +954,11 @@ body {
           </div>
         </div>
         <div class="roi-detail">
-          <div class="roi-detail-row"><span>Gasto en pauta</span><strong>$2,340.96</strong></div>
-          <div class="roi-detail-row"><span>Ingresos generados</span><strong>$80,019.35</strong></div>
-          <div class="roi-detail-row"><span>Ratio</span><strong>34.18 : 1</strong></div>
+          <div class="roi-detail-row"><span>Gasto en pauta</span><strong>$3,327.75</strong></div>
+          <div class="roi-detail-row"><span>Ingresos generados</span><strong>$94,811.78</strong></div>
+          <div class="roi-detail-row"><span>Ratio</span><strong>28.49 : 1</strong></div>
         </div>
-        <div class="roi-note">Por cada $1 en anuncios se recuperaron <strong>$34.18 en ventas</strong></div>
+        <div class="roi-note">Por cada $1 en anuncios se recuperaron <strong>$28.49 en ventas</strong></div>
       </div>
     </div>
 
@@ -870,8 +969,8 @@ body {
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         </div>
         <div class="metric-label">Tasa de Conversión</div>
-        <div class="metric-val" style="color:var(--orange);">0.56%</div>
-        <div class="metric-sub">2 clientes de 357 leads</div>
+        <div class="metric-val" style="color:var(--orange);">0.54%</div>
+        <div class="metric-sub">3 clientes de 560 leads</div>
         <div class="metric-formula">Leads → Clientes</div>
       </div>
       <div class="metric-card">
@@ -879,26 +978,26 @@ body {
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         </div>
         <div class="metric-label">CAC</div>
-        <div class="metric-val" style="color:var(--blue);">$1,170<span style="font-size:16px">.48</span></div>
+        <div class="metric-val" style="color:var(--blue);">$1,109<span style="font-size:16px">.25</span></div>
         <div class="metric-sub">costo por cliente adquirido</div>
-        <div class="metric-formula">$2,340.96 ÷ 2</div>
+        <div class="metric-formula">$3,327.75 ÷ 3</div>
       </div>
       <div class="metric-card">
         <div class="metric-icon" style="background:var(--blue-light);">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         </div>
         <div class="metric-label">Costo por Lead</div>
-        <div class="metric-val" style="color:var(--blue);">$6<span style="font-size:16px">.56</span></div>
-        <div class="metric-sub">acumulado 3 meses</div>
-        <div class="metric-formula">$2,340.96 ÷ 357</div>
+        <div class="metric-val" style="color:var(--blue);">$5<span style="font-size:16px">.94</span></div>
+        <div class="metric-sub">acumulado 4 meses</div>
+        <div class="metric-formula">$3,327.75 ÷ 560</div>
       </div>
       <div class="metric-card">
         <div class="metric-icon" style="background:var(--orange-light);">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
         <div class="metric-label">Tasa de Cierre</div>
-        <div class="metric-val" style="color:var(--orange);">11.76%</div>
-        <div class="metric-sub">2 de 17 citas coordinadas</div>
+        <div class="metric-val" style="color:var(--orange);">17.65%</div>
+        <div class="metric-sub">3 de 17 citas coordinadas</div>
         <div class="metric-formula">Citas → Clientes</div>
       </div>
     </div>
@@ -919,21 +1018,21 @@ body {
     <div class="row2-eq">
       <div class="opp-card">
         <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--purple);">Oportunidades Activas</div>
-        <div class="opp-num">15</div>
+        <div class="opp-num">14</div>
         <div style="font-size:12px;color:#7c3aed;margin-bottom:12px;">citas coordinadas pendientes de cierre</div>
         <div class="opp-detail">
           <div class="opp-row"><span>Total citas coordinadas</span><strong>17</strong></div>
-          <div class="opp-row"><span>Convertidas en venta</span><strong>2</strong></div>
+          <div class="opp-row"><span>Convertidas en venta</span><strong>3</strong></div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title" style="margin-bottom:14px;">Resumen Acumulado · 3 Meses</div>
-        <div class="sum-row"><div class="sum-lbl">Meses activos</div><div class="sum-val">3</div></div>
-        <div class="sum-row"><div class="sum-lbl">Inversión total</div><div class="sum-val" style="color:var(--blue);">$2,340.96</div></div>
-        <div class="sum-row"><div class="sum-lbl">Leads generados</div><div class="sum-val">357</div></div>
+        <div class="card-title" style="margin-bottom:14px;">Resumen Acumulado · 4 Meses</div>
+        <div class="sum-row"><div class="sum-lbl">Meses activos</div><div class="sum-val">4</div></div>
+        <div class="sum-row"><div class="sum-lbl">Inversión total</div><div class="sum-val" style="color:var(--blue);">$3,327.75</div></div>
+        <div class="sum-row"><div class="sum-lbl">Leads generados</div><div class="sum-val">560</div></div>
         <div class="sum-row"><div class="sum-lbl">Citas coordinadas</div><div class="sum-val">17</div></div>
-        <div class="sum-row"><div class="sum-lbl">Clientes adquiridos</div><div class="sum-val">2</div></div>
-        <div class="sum-row"><div class="sum-lbl">Ventas cerradas</div><div class="sum-val" style="color:var(--green);">$80,019.35</div></div>
+        <div class="sum-row"><div class="sum-lbl">Clientes adquiridos</div><div class="sum-val">3</div></div>
+        <div class="sum-row"><div class="sum-lbl">Ventas cerradas</div><div class="sum-val" style="color:var(--green);">$94,811.78</div></div>
       </div>
     </div>
 
@@ -941,7 +1040,7 @@ body {
 
   </div><!-- /content -->
 
-  <div class="footer">Del Norte by Windmar Home · Meta Ads Report · Mayo – Julio 2026</div>
+  <div class="footer">Del Norte by Windmar Home · Meta Ads Report · Mayo – Agosto 2026</div>
 
 </div><!-- /main -->
 
@@ -970,13 +1069,20 @@ const chartConfigs = {
     data:[277,30],
     colors:['#3b6cf4','#f97316']
   },
+  agosto: {
+    id:'chart-agosto',
+    type:'doughnut',
+    labels:['WhatsApp','CRM (formulario)'],
+    data:[164,39],
+    colors:['#22c55e','#3b6cf4']
+  },
   kpis: {
     id:'chart-kpis',
     type:'line',
-    labels:['Mayo','Junio','Julio'],
+    labels:['Mayo','Junio','Julio','Agosto'],
     datasets:[
-      { label:'Gasto', data:[436.58,862.00,1042.38], borderColor:'#3b6cf4', backgroundColor:'rgba(59,108,244,0.18)', tension:0.3, fill:true, pointRadius:4, pointBackgroundColor:'#3b6cf4' },
-      { label:'Leads', data:[24,26,307], borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.18)', tension:0.3, fill:true, pointRadius:4, pointBackgroundColor:'#f97316' }
+      { label:'Gasto', data:[436.58,862.00,1042.38,986.79], borderColor:'#3b6cf4', backgroundColor:'rgba(59,108,244,0.18)', tension:0.3, fill:true, pointRadius:4, pointBackgroundColor:'#3b6cf4' },
+      { label:'Leads', data:[24,26,307,203], borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.18)', tension:0.3, fill:true, pointRadius:4, pointBackgroundColor:'#f97316' }
     ]
   }
 };
@@ -1007,8 +1113,8 @@ function renderChart(tab) {
   });
 }
 
-const pageTitles = { mayo:'Mayo 2026', junio:'Junio 2026', julio:'Julio 2026', kpis:'KPIs Globales' };
-const pageBadges = { mayo:'Solar & Roofing · 31 días', junio:'Solo Roofing · 16 días', julio:'Solar & Roofing · 21 días', kpis:'Acumulado Mayo – Julio 2026' };
+const pageTitles = { mayo:'Mayo 2026', junio:'Junio 2026', julio:'Julio 2026', agosto:'Agosto 2026', kpis:'KPIs Globales' };
+const pageBadges = { mayo:'Solar & Roofing · 31 días', junio:'Solo Roofing · 16 días', julio:'Solar & Roofing · 21 días', agosto:'CRM + WhatsApp · 31 días', kpis:'Acumulado Mayo – Agosto 2026' };
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
